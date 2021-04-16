@@ -1,0 +1,31 @@
+name: Unit Test CI
+
+on: [push,pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, macos-latest]
+
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: recursive
+        fetch-depth: 0
+
+    - name: Discover cores
+      if: ${{ matrix.os != 'macos-latest' }}
+      run: lscpu | egrep 'Model name|Socket|Thread|NUMA|CPU\(s\)'
+
+    - name: Print Compiler version
+      # NOTE: on mac, this is actually symlink'd to clang, not gcc, but that's ok - we want to build on both
+      working-directory: .
+      run: gcc -v
+
+    - name: Build Tests
+      working-directory: ./unit_tests/
+      run: make -j4
+      
