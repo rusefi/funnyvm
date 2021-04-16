@@ -44,6 +44,7 @@ MAKE_ALL_RULE_HOOK:
 
 $(OBJS): | $(BUILDDIR)
 
+
 $(BUILDDIR) $(OBJDIR) $(LSTDIR):
 ifneq ($(USE_VERBOSE_COMPILE),yes)
 	@echo Compiler Options
@@ -52,6 +53,25 @@ ifneq ($(USE_VERBOSE_COMPILE),yes)
 endif
 	mkdir -p $(OBJDIR)
 	mkdir -p $(LSTDIR)
+
+$(ACOBJS) : $(OBJDIR)/%.o : %.c Makefile
+ifeq ($(USE_VERBOSE_COMPILE),yes)
+	@echo
+	$(CC) -c $(CFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
+else
+	@echo Compiling $(<F)
+	@$(CC) -c $(CFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
+endif
+
+$(TCOBJS) : $(OBJDIR)/%.o : %.c Makefile
+ifeq ($(USE_VERBOSE_COMPILE),yes)
+	@echo
+	$(CC) -c $(CFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
+else
+	@echo Compiling $(<F)
+	@$(CC) -c $(CFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
+endif
+
 
 $(BUILDDIR)/$(PROJECT): $(OBJS)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
