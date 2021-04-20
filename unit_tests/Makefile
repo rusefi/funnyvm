@@ -16,5 +16,6 @@ endif
 CC   = $(CCPREFIX) $(TRGT)gcc
 CPPC = $(CCPREFIX) $(TRGT)g++
 
+vpath %.c ../src
 
 include rules.mk
